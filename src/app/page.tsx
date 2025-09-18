@@ -1,6 +1,46 @@
+'use client';
+
+import { useState, useEffect, FormEvent } from 'react';
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
+import { apiService } from '@/services/api';
 
 export default function Home() {
+  const [apiUrl, setApiUrl] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if API URL is already configured
+    const savedUrl = apiService.getApiUrl();
+    if (savedUrl) {
+      setApiUrl(savedUrl);
+    }
+  }, []);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!apiUrl.trim()) return;
+
+    setIsLoading(true);
+    try {
+      // Remove trailing slash if present
+      const cleanUrl = apiUrl.trim().replace(/\/$/, '');
+      apiService.setApiUrl(cleanUrl);
+
+      // Redirect to processes page
+      router.push('/processes');
+    } catch (error) {
+      console.error('Error saving API URL:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoToProcesses = () => {
+    router.push('/processes');
+  };
+
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
@@ -14,11 +54,63 @@ export default function Home() {
         />
         <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
           <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+              <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                    Process Monitor
+                  </h1>
+                  <p className="text-gray-600">
+                    Configure your API endpoint to start monitoring processes
+                  </p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <label htmlFor="apiUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                      API URL
+                    </label>
+                    <input
+                      type="url"
+                      id="apiUrl"
+                      value={apiUrl}
+                      onChange={(e) => setApiUrl((e.target as HTMLInputElement).value)}
+                      placeholder="http://localhost:3000"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      required
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      Enter the base URL of your Go API server
+                    </p>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading || !apiUrl.trim()}
+                    className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isLoading ? 'Saving...' : 'Save & Continue'}
+                  </button>
+                </form>
+
+                {apiService.isApiConfigured() && (
+                  <div className="mt-6 pt-6 border-t border-gray-200">
+                    <p className="text-sm text-gray-600 mb-3">
+                      API URL already configured:{' '}
+                      <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
+                        {apiService.getApiUrl()}
+                      </span>
+                    </p>
+                    <button
+                      onClick={handleGoToProcesses}
+                      className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
+                    >
+                      Go to Processes
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           </li>
           <li className="tracking-[-.01em]">
             Save and see your changes instantly.
