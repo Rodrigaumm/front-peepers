@@ -34,7 +34,7 @@ class ApiService {
       throw new Error('API URL not configured');
     }
 
-    const requestBody: ProcessByPidRequest = { PID: pid };
+    const requestBody: ProcessByPidRequest = { pid: pid };
 
     const response = await fetch(`${baseUrl}/webhook/process-by-pid?webhookurl=${encodeURIComponent(baseUrl)}`, {
       method: 'POST',

@@ -1,58 +1,58 @@
 export interface ProcessByPidRequest {
-  PID: number;
+  pid: number;
 }
 
 export interface ProcessInfo {
-  ProcessID: number;
-  ProcessName: string;
-  ThreadCount: number;
-  ParentProcessID: number;
-  PriorityClassBase: number;
-  ElapsedTime: string;
-  HandleCount: number;
-  SessionID: number;
-  WorkingSetSize: number;
-  PeakWorkingSetSize: number;
-  WorkingSetSizeInKB: number;
-  PeakWorkingSetSizeInKB: number;
-  VirtualSize: number;
-  PeakVirtualSize: number;
-  VirtualSizeInKB: number;
-  PeakVirtualSizeInKB: number;
-  PageFaultCount: number;
-  PeakPageFaultCount: number;
-  PageFileUsage: number;
-  PeakPageFileUsage: number;
-  PageFileUsageInKB: number;
-  PeakPageFileUsageInKB: number;
-  PrivateUsage: number;
-  PrivateUsageInKB: number;
-  ExecutablePath: string;
-  CommandLine: string;
-  EnvironmentVariables: string;
-  Modules: string;
-  Threads: string;
-  Owner: string;
-  Description: string;
-  Version: string;
-  Company: string;
-  WindowTitle: string;
+  processId: number;
+  processName: number;
+  threadCount: number;
+  parentProcessID: number;
+  priorityClassBase: number;
+  elapsedTime: string;
+  handleCount: number;
+  sessionID: number;
+  workingSetSize: number;
+  peakWorkingSetSize: number;
+  workingSetSizeInKB: number;
+  peakWorkingSetSizeInKB: number;
+  virtualSize: number;
+  peakVirtualSize: number;
+  virtualSizeInKB: number;
+  peakVirtualSizeInKB: number;
+  pageFaultCount: number;
+  peakPageFaultCount: number;
+  pageFileUsage: number;
+  peakPageFileUsage: number;
+  pageFileUsageInKB: number;
+  peakPageFileUsageInKB: number;
+  privateUsage: number;
+  privateUsageInKB: number;
+  executablePath: string;
+  commandLine: string;
+  environmentVariables: string;
+  modules: string;
+  threads: string;
+  owner: string;
+  description: string;
+  version: string;
+  company: string;
+  windowTitle: string;
 }
 
 export interface ProcessBasic {
-  Index: number;
-  ProcessName: string;
-  ProcessID: number;
+  index: number;
+  processName: string;
+  processId: number;
 }
 
 export interface IterateProcessesResponse {
-  Success: boolean;
-  ProcessCount: number;
-  Processes: ProcessBasic[];
+  success: boolean;
+  processCount: number;
+  processes: ProcessBasic[];
 }
 
 export interface ProcessByPidResponse {
-  Success: boolean;
-  ProcessInfo: ProcessInfo;
-  Error?: string;
+  success: boolean;
+  processInfo: ProcessInfo;
+  error?: string;
 }

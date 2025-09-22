@@ -36,10 +36,10 @@ export default function ProcessDetailPage() {
     try {
       const response: ProcessByPidResponse = await apiService.getProcessByPid(pid);
       
-      if (response.Success) {
-        setProcessInfo(response.ProcessInfo);
+      if (response.success) {
+        setProcessInfo(response.processInfo);
       } else {
-        setError(response.Error || 'Failed to fetch process details');
+        setError(response.error || 'Failed to fetch process details');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred while fetching process details');
@@ -135,16 +135,16 @@ export default function ProcessDetailPage() {
             <div className="flex items-center space-x-4">
               <button
                 onClick={handleBack}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{processInfo.ProcessName}</h1>
+                <h1 className="text-2xl font-bold text-gray-900">{processInfo.processName}</h1>
                 <p className="text-gray-600 mt-1">
-                  PID: {processInfo.ProcessID} • Threads: {processInfo.ThreadCount}
+                  PID: {processInfo.processId} • Threads: {processInfo.threadCount}
                 </p>
               </div>
             </div>
@@ -175,35 +175,35 @@ export default function ProcessDetailPage() {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-gray-600">Process ID:</span>
-                <span className="font-mono text-sm">{processInfo.ProcessID}</span>
+                <span className="font-mono text-sm">{processInfo.processId}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Process Name:</span>
-                <span className="font-mono text-sm">{processInfo.ProcessName}</span>
+                <span className="font-mono text-sm">{processInfo.processName}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Parent PID:</span>
-                <span className="font-mono text-sm">{processInfo.ParentProcessID}</span>
+                <span className="font-mono text-sm">{processInfo.parentProcessID}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Thread Count:</span>
-                <span className="font-mono text-sm">{formatNumber(processInfo.ThreadCount)}</span>
+                <span className="font-mono text-sm">{formatNumber(processInfo.threadCount)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Session ID:</span>
-                <span className="font-mono text-sm">{processInfo.SessionID}</span>
+                <span className="font-mono text-sm">{processInfo.sessionID}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Handle Count:</span>
-                <span className="font-mono text-sm">{formatNumber(processInfo.HandleCount)}</span>
+                <span className="font-mono text-sm">{formatNumber(processInfo.handleCount)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Priority Base:</span>
-                <span className="font-mono text-sm">{processInfo.PriorityClassBase}</span>
+                <span className="font-mono text-sm">{processInfo.priorityClassBase}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Elapsed Time:</span>
-                <span className="font-mono text-sm">{processInfo.ElapsedTime}</span>
+                <span className="font-mono text-sm">{processInfo.elapsedTime}</span>
               </div>
             </div>
           </div>
@@ -219,35 +219,35 @@ export default function ProcessDetailPage() {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-gray-600">Working Set:</span>
-                <span className="font-mono text-sm">{formatBytes(processInfo.WorkingSetSize)}</span>
+                <span className="font-mono text-sm">{formatBytes(processInfo.workingSetSize)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Peak Working Set:</span>
-                <span className="font-mono text-sm">{formatBytes(processInfo.PeakWorkingSetSize)}</span>
+                <span className="font-mono text-sm">{formatBytes(processInfo.peakWorkingSetSize)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Virtual Size:</span>
-                <span className="font-mono text-sm">{formatBytes(processInfo.VirtualSize)}</span>
+                <span className="font-mono text-sm">{formatBytes(processInfo.virtualSize)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Peak Virtual Size:</span>
-                <span className="font-mono text-sm">{formatBytes(processInfo.PeakVirtualSize)}</span>
+                <span className="font-mono text-sm">{formatBytes(processInfo.peakVirtualSize)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Page File Usage:</span>
-                <span className="font-mono text-sm">{formatBytes(processInfo.PageFileUsage)}</span>
+                <span className="font-mono text-sm">{formatBytes(processInfo.pageFileUsage)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Peak Page File:</span>
-                <span className="font-mono text-sm">{formatBytes(processInfo.PeakPageFileUsage)}</span>
+                <span className="font-mono text-sm">{formatBytes(processInfo.peakPageFileUsage)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Private Usage:</span>
-                <span className="font-mono text-sm">{formatBytes(processInfo.PrivateUsage)}</span>
+                <span className="font-mono text-sm">{formatBytes(processInfo.privateUsage)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Page Faults:</span>
-                <span className="font-mono text-sm">{formatNumber(processInfo.PageFaultCount)}</span>
+                <span className="font-mono text-sm">{formatNumber(processInfo.pageFaultCount)}</span>
               </div>
             </div>
           </div>
@@ -265,39 +265,39 @@ export default function ProcessDetailPage() {
                 <div>
                   <span className="text-gray-600 block text-sm font-medium mb-1">Executable Path:</span>
                   <span className="font-mono text-xs bg-gray-100 p-2 rounded block break-all">
-                    {processInfo.ExecutablePath || 'N/A'}
+                    {processInfo.executablePath || 'N/A'}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-600 block text-sm font-medium mb-1">Owner:</span>
-                  <span className="font-mono text-sm">{processInfo.Owner || 'N/A'}</span>
+                  <span className="font-mono text-sm">{processInfo.owner || 'N/A'}</span>
                 </div>
                 <div>
                   <span className="text-gray-600 block text-sm font-medium mb-1">Company:</span>
-                  <span className="font-mono text-sm">{processInfo.Company || 'N/A'}</span>
+                  <span className="font-mono text-sm">{processInfo.company || 'N/A'}</span>
                 </div>
                 <div>
                   <span className="text-gray-600 block text-sm font-medium mb-1">Version:</span>
-                  <span className="font-mono text-sm">{processInfo.Version || 'N/A'}</span>
+                  <span className="font-mono text-sm">{processInfo.version || 'N/A'}</span>
                 </div>
               </div>
               <div className="space-y-3">
                 <div>
                   <span className="text-gray-600 block text-sm font-medium mb-1">Description:</span>
-                  <span className="font-mono text-sm">{processInfo.Description || 'N/A'}</span>
+                  <span className="font-mono text-sm">{processInfo.description || 'N/A'}</span>
                 </div>
                 <div>
                   <span className="text-gray-600 block text-sm font-medium mb-1">Window Title:</span>
-                  <span className="font-mono text-sm">{processInfo.WindowTitle || 'N/A'}</span>
+                  <span className="font-mono text-sm">{processInfo.windowTitle || 'N/A'}</span>
                 </div>
               </div>
             </div>
-            
-            {processInfo.CommandLine && (
+
+            {processInfo.commandLine && (
               <div className="mt-6">
                 <span className="text-gray-600 block text-sm font-medium mb-2">Command Line:</span>
                 <div className="bg-gray-100 p-3 rounded font-mono text-xs break-all">
-                  {processInfo.CommandLine}
+                  {processInfo.commandLine}
                 </div>
               </div>
             )}

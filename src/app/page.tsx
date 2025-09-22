@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect, FormEvent } from 'react';
-import Image from "next/image";
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiService } from '@/services/api';
 
@@ -18,7 +17,7 @@ export default function Home() {
     }
   }, []);
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!apiUrl.trim()) return;
 
@@ -27,7 +26,7 @@ export default function Home() {
       // Remove trailing slash if present
       const cleanUrl = apiUrl.trim().replace(/\/$/, '');
       apiService.setApiUrl(cleanUrl);
-
+      
       // Redirect to processes page
       router.push('/processes');
     } catch (error) {
@@ -42,154 +41,116 @@ export default function Home() {
   };
 
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-              <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-                <div className="text-center mb-8">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    Process Monitor
-                  </h1>
-                  <p className="text-gray-600">
-                    Configure your API endpoint to start monitoring processes
-                  </p>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label htmlFor="apiUrl" className="block text-sm font-medium text-gray-700 mb-2">
-                      API URL
-                    </label>
-                    <input
-                      type="url"
-                      id="apiUrl"
-                      value={apiUrl}
-                      onChange={(e) => setApiUrl((e.target as HTMLInputElement).value)}
-                      placeholder="http://localhost:3000"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                      required
-                    />
-                    <p className="mt-1 text-xs text-gray-500">
-                      Enter the base URL of your Go API server
-                    </p>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isLoading || !apiUrl.trim()}
-                    className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {isLoading ? 'Saving...' : 'Save & Continue'}
-                  </button>
-                </form>
-
-                {apiService.isApiConfigured() && (
-                  <div className="mt-6 pt-6 border-t border-gray-200">
-                    <p className="text-sm text-gray-600 mb-3">
-                      API URL already configured:{' '}
-                      <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
-                        {apiService.getApiUrl()}
-                      </span>
-                    </p>
-                    <button
-                      onClick={handleGoToProcesses}
-                      className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
-                    >
-                      Go to Processes
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-6">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+            </svg>
+          </div>
+          <h1 className="text-4xl font-bold text-white mb-3">
+            Process Monitor
+          </h1>
+          <p className="text-gray-300 text-lg">
+            Monitor and analyze system processes in real-time
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Main Card */}
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-8 shadow-2xl">
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-white mb-2">
+              API Configuration
+            </h2>
+            <p className="text-gray-300 text-sm">
+              Connect to your Go API server to start monitoring processes
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="apiUrl" className="block text-sm font-medium text-gray-200 mb-3">
+                API Server URL
+              </label>
+              <div className="relative">
+                <input
+                  type="url"
+                  id="apiUrl"
+                  value={apiUrl}
+                  onChange={(e) => setApiUrl(e.target.value)}
+                  placeholder="http://localhost:3000"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm transition-all"
+                  required
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                </div>
+              </div>
+              <p className="mt-2 text-xs text-gray-400">
+                Enter the base URL where your Go API server is running
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading || !apiUrl.trim()}
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Connecting...
+                </div>
+              ) : (
+                <div className="flex items-center justify-center">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  Connect & Start Monitoring
+                </div>
+              )}
+            </button>
+          </form>
+
+          {/* Already Configured Section */}
+          {apiService.isApiConfigured() && (
+            <div className="mt-8 pt-6 border-t border-white/20">
+              <div className="flex items-center mb-4">
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                <span className="text-sm text-gray-300">API Already Connected</span>
+              </div>
+              <div className="bg-black/20 rounded-lg p-3 mb-4">
+                <p className="text-xs text-gray-400 mb-1">Current API URL:</p>
+                <p className="font-mono text-sm text-white break-all">
+                  {apiService.getApiUrl()}
+                </p>
+              </div>
+              <button
+                onClick={handleGoToProcesses}
+                className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <div className="flex items-center justify-center">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                  View Processes
+                </div>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-8">
+          <p className="text-gray-400 text-sm">
+            Secure process monitoring with real-time updates
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

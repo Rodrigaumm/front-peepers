@@ -29,9 +29,9 @@ export default function ProcessesPage() {
     try {
       const response: IterateProcessesResponse = await apiService.iterateProcesses();
       
-      if (response.Success) {
-        setProcesses(response.Processes || []);
-        setProcessCount(response.ProcessCount);
+      if (response.success) {
+        setProcesses(response.processes || []);
+        setProcessCount(response.processCount);
       } else {
         setError('Failed to fetch processes from API');
       }
@@ -148,14 +148,14 @@ export default function ProcessesPage() {
             {/* Process cards */}
             <div className="space-y-4">
               {processes.map((process) => (
-                <div key={process.ProcessID} className="relative">
+                <div key={process.processId} className="relative">
                   {/* Connection dot */}
                   <div className="absolute left-6 top-6 w-4 h-4 bg-indigo-600 rounded-full border-4 border-white shadow-sm z-10"></div>
 
                   {/* Process card */}
                   <div className="ml-16">
                     <div
-                      onClick={() => handleProcessClick(process.ProcessID)}
+                      onClick={() => handleProcessClick(process.processId)}
                       className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md hover:border-indigo-300 transition-all cursor-pointer group"
                     >
                       <div className="flex items-center justify-between">
@@ -168,10 +168,10 @@ export default function ProcessesPage() {
                             </div>
                             <div>
                               <h3 className="text-lg font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
-                                {process.ProcessName}
+                                {process.processName}
                               </h3>
                               <p className="text-sm text-gray-500">
-                                PID: {process.ProcessID} • Index: {process.Index}
+                                PID: {process.processId} • Index: {process.index}
                               </p>
                             </div>
                           </div>
