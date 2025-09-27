@@ -56,6 +56,12 @@ export default function ProcessDetailPage() {
     fetchProcessDetails();
   };
 
+  const handleProcessClick = (processId: number) => {
+    if (!processId) return;
+
+    router.push(`/process/${processId}`);
+  };
+
   const formatBytes = (bytes: number): string => {
     if (bytes === 0) return '0 B';
     const k = 1024;
@@ -73,7 +79,7 @@ export default function ProcessDetailPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading process details...</p>
+          <p className="text-gray-600">Carregando detalhes dos processos...</p>
         </div>
       </div>
     );
@@ -88,20 +94,20 @@ export default function ProcessDetailPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Error</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Erro</h2>
           <p className="text-gray-600 mb-6">{error}</p>
           <div className="space-y-3">
             <button
               onClick={handleRefresh}
               className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors"
             >
-              Try Again
+              Tentar Novamente
             </button>
             <button
               onClick={handleBack}
               className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition-colors"
             >
-              Back to Processes
+              Voltar para Processos
             </button>
           </div>
         </div>
@@ -119,7 +125,7 @@ export default function ProcessDetailPage() {
             onClick={handleBack}
             className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition-colors"
           >
-            Back to Processes
+            Voltar aos Processos
           </button>
         </div>
       </div>
@@ -155,7 +161,7 @@ export default function ProcessDetailPage() {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              <span>Refresh</span>
+              <span>Atualizar</span>
             </button>
           </div>
         </div>
@@ -170,7 +176,7 @@ export default function ProcessDetailPage() {
               <svg className="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Basic Information
+              Informações Básicas
             </h2>
             <div className="space-y-3">
               <div className="flex justify-between">
@@ -214,7 +220,7 @@ export default function ProcessDetailPage() {
               <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
-              Memory Usage
+              Uso de Memória
             </h2>
             <div className="space-y-3">
               <div className="flex justify-between">
@@ -258,38 +264,56 @@ export default function ProcessDetailPage() {
               <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              Process Details
+              Lista duplamente encadeada - ActiveProcessLinks
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <div>
-                  <span className="text-gray-600 block text-sm font-medium mb-1">Executable Path:</span>
-                  <span className="font-mono text-xs bg-gray-100 p-2 rounded block break-all">
-                    {processInfo.executablePath || 'N/A'}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-gray-600 block text-sm font-medium mb-1">Owner:</span>
-                  <span className="font-mono text-sm">{processInfo.owner || 'N/A'}</span>
-                </div>
-                <div>
-                  <span className="text-gray-600 block text-sm font-medium mb-1">Company:</span>
-                  <span className="font-mono text-sm">{processInfo.company || 'N/A'}</span>
-                </div>
-                <div>
-                  <span className="text-gray-600 block text-sm font-medium mb-1">Version:</span>
-                  <span className="font-mono text-sm">{processInfo.version || 'N/A'}</span>
-                </div>
+               {processInfo.previousProcess && ( 
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 lg:col-span-2 cursor-pointer hover:bg-gray-200 transition duration-300 ease-in-out" onClick={() => handleProcessClick(processInfo.previousProcess.processId)}>
+                    <h1 className="bg-indigo-600 text-white text-center mb-4">Processo Anterior (Backlink)</h1>
+                    
+                          <div>
+                            <div className="mb-4">
+                              <span className="text-gray-600 block text-sm font-medium mb-1">Process ID:</span>
+                              <span className="font-mono text-xs bg-gray-100 p-2 rounded block break-all">
+                                {processInfo.previousProcess.processId || 'N/A'}
+                              </span>
+                            </div>
+                            <div className="mb-4">
+                              <span className="text-gray-600 block text-sm font-medium mb-1">Process Name:</span>
+                              <span className="font-mono text-xs bg-gray-100 p-2 rounded block break-all">{processInfo.previousProcess.processName || 'N/A'}</span>
+                            </div>
+                            <div>
+                              <span className="text-gray-600 block text-sm font-medium mb-1">EPROCESS Address:</span>
+                              <span className="font-mono text-xs bg-gray-100 p-2 rounded block break-all">{processInfo.previousProcess.eProcessAddress || 'N/A'}</span>
+                            </div>
+                          </div>
+                    
+                  </div>
+              )}
               </div>
               <div className="space-y-3">
-                <div>
-                  <span className="text-gray-600 block text-sm font-medium mb-1">Description:</span>
-                  <span className="font-mono text-sm">{processInfo.description || 'N/A'}</span>
-                </div>
-                <div>
-                  <span className="text-gray-600 block text-sm font-medium mb-1">Window Title:</span>
-                  <span className="font-mono text-sm">{processInfo.windowTitle || 'N/A'}</span>
-                </div>
+                {processInfo.nextProcess && (
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 lg:col-span-2 cursor-pointer hover:bg-gray-200 transition duration-300 ease-in-out" onClick={() => handleProcessClick(processInfo.nextProcess.processId)}>
+                      <h1 className="bg-green-600 text-white text-center mb-4">Processo Adiante (Forwardlink)</h1>
+                            <div>
+                              <div className="mb-4">
+                                <span className="text-gray-600 block text-sm font-medium mb-1">Process ID:</span>
+                                <span className="font-mono text-xs bg-gray-100 p-2 rounded block break-all">
+                                  {processInfo.nextProcess.processId || 'N/A'}
+                                </span>
+                              </div>
+                              <div className="mb-4">
+                                <span className="text-gray-600 block text-sm font-medium mb-1">Process Name:</span>
+                                <span className="font-mono text-xs bg-gray-100 p-2 rounded block break-all">{processInfo.nextProcess.processName || 'N/A'}</span>
+                              </div>
+                              <div>
+                                <span className="text-gray-600 block text-sm font-medium mb-1">EPROCESS Address:</span>
+                                <span className="font-mono text-xs bg-gray-100 p-2 rounded block break-all">{processInfo.nextProcess.eProcessAddress || 'N/A'}</span>
+                              </div>
+                            </div>
+                    </div>
+                  )}
               </div>
             </div>
 

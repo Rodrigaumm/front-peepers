@@ -2,6 +2,12 @@ export interface ProcessByPidRequest {
   pid: number;
 }
 
+export interface AdjacentProcess {
+  processId: number;
+  eProcessAddress: string;
+  processName: string;
+}
+
 export interface ProcessInfo {
   processId: number;
   processName: number;
@@ -37,6 +43,8 @@ export interface ProcessInfo {
   version: string;
   company: string;
   windowTitle: string;
+  previousProcess: AdjacentProcess;
+  nextProcess: AdjacentProcess;
 }
 
 export interface ProcessBasic {

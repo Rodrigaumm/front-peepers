@@ -54,7 +54,7 @@ export default function Home() {
             Process Monitor
           </h1>
           <p className="text-gray-300 text-lg">
-            Monitor and analyze system processes in real-time
+            Monitore e analise processos do sistema pelo kernel
           </p>
         </div>
 
@@ -62,10 +62,10 @@ export default function Home() {
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-8 shadow-2xl">
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-white mb-2">
-              API Configuration
+              Configuração da API
             </h2>
             <p className="text-gray-300 text-sm">
-              Connect to your Go API server to start monitoring processes
+              Conecete-se à sua API em Go para começar a monitorar os processos
             </p>
           </div>
 
@@ -91,7 +91,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="mt-2 text-xs text-gray-400">
-                Enter the base URL where your Go API server is running
+                URL onde sua API em GO está rodando
               </p>
             </div>
 
@@ -110,7 +110,7 @@ export default function Home() {
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
-                  Connect & Start Monitoring
+                  Conecte-se & comece a Explorar
                 </div>
               )}
             </button>
@@ -121,23 +121,23 @@ export default function Home() {
             <div className="mt-8 pt-6 border-t border-white/20">
               <div className="flex items-center mb-4">
                 <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                <span className="text-sm text-gray-300">API Already Connected</span>
+                <span className="text-sm text-gray-300">API Já Conectada</span>
               </div>
               <div className="bg-black/20 rounded-lg p-3 mb-4">
-                <p className="text-xs text-gray-400 mb-1">Current API URL:</p>
+                <p className="text-xs text-gray-400 mb-1">API URL atual:</p>
                 <p className="font-mono text-sm text-white break-all">
                   {apiService.getApiUrl()}
                 </p>
               </div>
               <button
                 onClick={handleGoToProcesses}
-                className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
               >
                 <div className="flex items-center justify-center">
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
-                  View Processes
+                  Explorar Processos
                 </div>
               </button>
             </div>
@@ -147,7 +147,7 @@ export default function Home() {
         {/* Footer */}
         <div className="text-center mt-8">
           <p className="text-gray-400 text-sm">
-            Secure process monitoring with real-time updates
+            Processo de monitoramento seguro com updates em tempo-real
           </p>
         </div>
       </div>
