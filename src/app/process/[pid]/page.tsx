@@ -14,7 +14,6 @@ export default function ProcessDetailPage() {
   const pid = parseInt(params.pid as string);
 
   useEffect(() => {
-    // Check if API is configured
     if (!apiService.isApiConfigured()) {
       router.push('/');
       return;
@@ -136,7 +135,7 @@ export default function ProcessDetailPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
-        <div className="max-w-6xl mx-auto px-4 py-6">
+        <div className="max-w-8xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
@@ -168,153 +167,176 @@ export default function ProcessDetailPage() {
       </div>
 
       {/* Process Details */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Basic Information */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <svg className="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Informações Básicas
-            </h2>
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Process ID:</span>
-                <span className="font-mono text-sm">{processInfo.processId}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Process Name:</span>
-                <span className="font-mono text-sm">{processInfo.processName}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Parent PID:</span>
-                <span className="font-mono text-sm">{processInfo.parentProcessID}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Thread Count:</span>
-                <span className="font-mono text-sm">{formatNumber(processInfo.threadCount)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Session ID:</span>
-                <span className="font-mono text-sm">{processInfo.sessionID}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Handle Count:</span>
-                <span className="font-mono text-sm">{formatNumber(processInfo.handleCount)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Priority Base:</span>
-                <span className="font-mono text-sm">{processInfo.priorityClassBase}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Elapsed Time:</span>
-                <span className="font-mono text-sm">{processInfo.elapsedTime}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Memory Information */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              Uso de Memória
-            </h2>
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Working Set:</span>
-                <span className="font-mono text-sm">{formatBytes(processInfo.workingSetSize)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Peak Working Set:</span>
-                <span className="font-mono text-sm">{formatBytes(processInfo.peakWorkingSetSize)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Virtual Size:</span>
-                <span className="font-mono text-sm">{formatBytes(processInfo.virtualSize)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Peak Virtual Size:</span>
-                <span className="font-mono text-sm">{formatBytes(processInfo.peakVirtualSize)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Page File Usage:</span>
-                <span className="font-mono text-sm">{formatBytes(processInfo.pageFileUsage)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Peak Page File:</span>
-                <span className="font-mono text-sm">{formatBytes(processInfo.peakPageFileUsage)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Private Usage:</span>
-                <span className="font-mono text-sm">{formatBytes(processInfo.privateUsage)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Page Faults:</span>
-                <span className="font-mono text-sm">{formatNumber(processInfo.pageFaultCount)}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Process Details */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 lg:col-span-2">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex items-center">
+          {/* ActiveProcessLinks */}
+          <div className="flex-[2_1] bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
               <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              Lista duplamente encadeada - ActiveProcessLinks
+              Estrutura ActiveProcessLinks
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-3">
+            <div>
                {processInfo.previousProcess && ( 
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 lg:col-span-2 cursor-pointer hover:bg-gray-200 transition duration-300 ease-in-out" onClick={() => handleProcessClick(processInfo.previousProcess.processId)}>
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer hover:bg-gray-200 transition duration-300 ease-in-out" onClick={() => handleProcessClick(processInfo.previousProcess.processId)}>
                     <h1 className="bg-indigo-600 text-white text-center mb-4">Processo Anterior (Backlink)</h1>
                     
                           <div>
                             <div className="mb-4">
-                              <span className="text-gray-600 block text-sm font-medium mb-1">Process ID:</span>
+                              <span className="text-gray-600 block text-sm font-medium mb-1">ID do Processo:</span>
                               <span className="font-mono text-xs bg-gray-100 p-2 rounded block break-all">
                                 {processInfo.previousProcess.processId || 'N/A'}
                               </span>
                             </div>
                             <div className="mb-4">
-                              <span className="text-gray-600 block text-sm font-medium mb-1">Process Name:</span>
+                              <span className="text-gray-600 block text-sm font-medium mb-1">Nome do Processo:</span>
                               <span className="font-mono text-xs bg-gray-100 p-2 rounded block break-all">{processInfo.previousProcess.processName || 'N/A'}</span>
                             </div>
                             <div>
-                              <span className="text-gray-600 block text-sm font-medium mb-1">EPROCESS Address:</span>
+                              <span className="text-gray-600 block text-sm font-medium mb-1">Endereço EPROCESS:</span>
                               <span className="font-mono text-xs bg-gray-100 p-2 rounded block break-all">{processInfo.previousProcess.eProcessAddress || 'N/A'}</span>
                             </div>
                           </div>
                     
                   </div>
               )}
+            </div>
+
+            {processInfo.commandLine && (
+              <div className="mt-6">
+                <span className="text-gray-600 block text-sm font-medium mb-2">Command Line:</span>
+                <div className="bg-gray-100 p-3 rounded font-mono text-xs break-all">
+                  {processInfo.commandLine}
+                </div>
               </div>
+            )}
+          </div>
+
+          <div className="flex-[3_0]">
+            {/* Basic Information */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-md font-semibold text-gray-900 mb-4 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Informações Básicas
+              </h2>
               <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">ID do Processo:</span>
+                  <span className="font-mono text-sm">{processInfo.processId}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Nome do Processo:</span>
+                  <span className="font-mono text-sm">{processInfo.processName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Endereço EPROCESS:</span>
+                  <span className="font-mono text-sm">{processInfo.currentProcessAddress}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">PID do Processo Pai:</span>
+                  <span className="font-mono text-sm">{processInfo.parentProcessID}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Contagem de Threads:</span>
+                  <span className="font-mono text-sm">{formatNumber(processInfo.threadCount)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">ID da Sessão:</span>
+                  <span className="font-mono text-sm">{processInfo.sessionID}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Contagem de Handles:</span>
+                  <span className="font-mono text-sm">{formatNumber(processInfo.handleCount)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Prioridade Base:</span>
+                  <span className="font-mono text-sm">{processInfo.priorityClassBase}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Tempo decorrido:</span>
+                  <span className="font-mono text-sm">{processInfo.elapsedTime}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Memory Information */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Uso de Memória
+              </h2>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Memória física usada:</span>
+                  <span className="font-mono text-sm">{formatBytes(processInfo.workingSetSize)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Máximo de memória física alocada:</span>
+                  <span className="font-mono text-sm">{formatBytes(processInfo.peakWorkingSetSize)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Tamanho Virtual:</span>
+                  <span className="font-mono text-sm">{formatBytes(processInfo.virtualSize)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Maior tamanho virtual:</span>
+                  <span className="font-mono text-sm">{formatBytes(processInfo.peakVirtualSize)}</span>
+                </div>
+{/*                 <div className="flex justify-between">
+                  <span className="text-gray-600">Páginas de Arquivo usadas:</span>
+                  <span className="font-mono text-sm">{formatBytes(processInfo.pageFileUsage)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Máximo de Páginas de Arquivo:</span>
+                  <span className="font-mono text-sm">{formatBytes(processInfo.peakPageFileUsage)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Uso Privado:</span>
+                  <span className="font-mono text-sm">{formatBytes(processInfo.privateUsage)}</span>
+                </div> */}
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Falta de Página:</span>
+                  <span className="font-mono text-sm">{formatNumber(processInfo.pageFaultCount)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ActiveProcessLinks */}
+          <div className="flex-[2_1] bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Estrutura ActiveProcessLinks
+            </h2>
+            <div>
                 {processInfo.nextProcess && (
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 lg:col-span-2 cursor-pointer hover:bg-gray-200 transition duration-300 ease-in-out" onClick={() => handleProcessClick(processInfo.nextProcess.processId)}>
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer hover:bg-gray-200 transition duration-300 ease-in-out" onClick={() => handleProcessClick(processInfo.nextProcess.processId)}>
                       <h1 className="bg-green-600 text-white text-center mb-4">Processo Adiante (Forwardlink)</h1>
                             <div>
                               <div className="mb-4">
-                                <span className="text-gray-600 block text-sm font-medium mb-1">Process ID:</span>
+                                <span className="text-gray-600 block text-sm font-medium mb-1">ID do Processo:</span>
                                 <span className="font-mono text-xs bg-gray-100 p-2 rounded block break-all">
                                   {processInfo.nextProcess.processId || 'N/A'}
                                 </span>
                               </div>
                               <div className="mb-4">
-                                <span className="text-gray-600 block text-sm font-medium mb-1">Process Name:</span>
+                                <span className="text-gray-600 block text-sm font-medium mb-1">Nome do Processo:</span>
                                 <span className="font-mono text-xs bg-gray-100 p-2 rounded block break-all">{processInfo.nextProcess.processName || 'N/A'}</span>
                               </div>
                               <div>
-                                <span className="text-gray-600 block text-sm font-medium mb-1">EPROCESS Address:</span>
+                                <span className="text-gray-600 block text-sm font-medium mb-1">Endereço EPROCESS:</span>
                                 <span className="font-mono text-xs bg-gray-100 p-2 rounded block break-all">{processInfo.nextProcess.eProcessAddress || 'N/A'}</span>
                               </div>
                             </div>
                     </div>
                   )}
-              </div>
             </div>
 
             {processInfo.commandLine && (

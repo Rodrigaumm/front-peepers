@@ -11,6 +11,7 @@ export interface AdjacentProcess {
 export interface ProcessInfo {
   processId: number;
   processName: number;
+  currentProcessAddress: string;
   threadCount: number;
   parentProcessID: number;
   priorityClassBase: number;
