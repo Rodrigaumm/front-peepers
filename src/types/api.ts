@@ -13,9 +13,10 @@ export interface ProcessInfo {
   processName: number;
   currentProcessAddress: string;
   threadCount: number;
-  parentProcessID: number;
+  parentProcessId: number;
   priorityClassBase: number;
-  elapsedTime: string;
+  createTime: string;
+  basePriority: number;
   handleCount: number;
   sessionID: number;
   workingSetSize: number;
@@ -57,7 +58,7 @@ export interface ProcessBasic {
 export interface IterateProcessesResponse {
   success: boolean;
   processCount: number;
-  processes: ProcessBasic[];
+  processes: ProcessInfo[];
 }
 
 export interface ProcessByPidResponse {

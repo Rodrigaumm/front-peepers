@@ -64,7 +64,7 @@ export default function ProcessDetailPage() {
   const formatBytes = (bytes: number): string => {
     if (bytes === 0) return '0 B';
     const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
@@ -237,7 +237,7 @@ export default function ProcessDetailPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">PID do Processo Pai:</span>
-                  <span className="font-mono text-sm">{processInfo.parentProcessID}</span>
+                  <span className="font-mono text-sm">{processInfo.parentProcessId}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Contagem de Threads:</span>
@@ -253,11 +253,11 @@ export default function ProcessDetailPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Prioridade Base:</span>
-                  <span className="font-mono text-sm">{processInfo.priorityClassBase}</span>
+                  <span className="font-mono text-sm">{processInfo.basePriority}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tempo decorrido:</span>
-                  <span className="font-mono text-sm">{processInfo.elapsedTime}</span>
+                  <span className="font-mono text-sm">{processInfo.createTime}</span>
                 </div>
               </div>
             </div>

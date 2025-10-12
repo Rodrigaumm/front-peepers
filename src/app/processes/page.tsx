@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiService } from '@/services/api';
-import { ProcessBasic, IterateProcessesResponse } from '@/types/api';
+import { ProcessBasic, IterateProcessesResponse, ProcessInfo } from '@/types/api';
 
 export default function ProcessesPage() {
-  const [processes, setProcesses] = useState<ProcessBasic[]>([]);
+  const [processes, setProcesses] = useState<ProcessInfo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [processCount, setProcessCount] = useState(0);
@@ -171,7 +171,7 @@ export default function ProcessesPage() {
                                 {process.processName}
                               </h3>
                               <p className="text-sm text-gray-500">
-                                PID: {process.processId} • Index: {process.index}
+                                PID: {process.processId} • Endereço: {process.currentProcessAddress}
                               </p>
                             </div>
                           </div>
