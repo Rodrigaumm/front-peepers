@@ -3,43 +3,51 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { apiService } from '@/services/api';
-import { ProcessInfo, ProcessByPidResponse } from '@/types/api';
+import { authService } from '@/services/auth';
+import { ProcessInfo } from '@/types/api';
 
-export default function ProcessDetailPage() {
+export default function SnapshotProcessDetailPage() {
   const [processInfo, setProcessInfo] = useState<ProcessInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const params = useParams();
-  const pid = parseInt(params.pid as string);
+  const snapshotId = parseInt(params.id as string);
+  const processId = parseInt(params.processId as string);
 
   useEffect(() => {
+    // Check if Webhook is configured
     if (!apiService.isWebhookConfigured()) {
       router.push('/');
       return;
     }
 
-    if (isNaN(pid)) {
-      setError('Invalid process ID');
+    // Check if user is authenticated
+    if (!authService.isAuthenticated()) {
+      router.push('/');
+      return;
+    }
+
+    if (isNaN(snapshotId) || isNaN(processId)) {
+      setError('ID de snapshot ou processo inválido');
       setIsLoading(false);
       return;
     }
 
     fetchProcessDetails();
-  }, [router, pid]);
+  }, [router, snapshotId, processId]);
 
   const fetchProcessDetails = async () => {
     setIsLoading(true);
     setError(null);
     
     try {
-      const response: ProcessByPidResponse = await apiService.getProcessByPid(pid);
-
-      console.log(response);
-      if (response.success) {
-        setProcessInfo(response.process);
+      const response = await apiService.getProcessById(processId);
+      
+      if (response) {
+        setProcessInfo(response);
       } else {
-        setError(response.error || 'Failed to fetch process details');
+        setError('Failed to fetch process details');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred while fetching process details');
@@ -49,17 +57,12 @@ export default function ProcessDetailPage() {
   };
 
   const handleBack = () => {
-    router.push('/processes');
+    router.push(`/history/${snapshotId}`);
   };
 
-  const handleRefresh = () => {
-    fetchProcessDetails();
-  };
-
-  const handleProcessClick = (processId: number) => {
-    if (!processId) return;
-
-    router.push(`/process/${processId}`);
+  const handleProcessClick = (targetProcessId: number) => {
+    if (!targetProcessId) return;
+    router.push(`/history/${snapshotId}/process/${targetProcessId}`);
   };
 
   const formatBytes = (bytes: number): string => {
@@ -79,7 +82,7 @@ export default function ProcessDetailPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Carregando detalhes dos processos...</p>
+          <p className="text-gray-600">Carregando detalhes do processo...</p>
         </div>
       </div>
     );
@@ -98,7 +101,7 @@ export default function ProcessDetailPage() {
           <p className="text-gray-600 mb-6">{error}</p>
           <div className="space-y-3">
             <button
-              onClick={handleRefresh}
+              onClick={fetchProcessDetails}
               className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors"
             >
               Tentar Novamente
@@ -107,7 +110,7 @@ export default function ProcessDetailPage() {
               onClick={handleBack}
               className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition-colors"
             >
-              Voltar para Processos
+              Voltar ao Snapshot
             </button>
           </div>
         </div>
@@ -119,13 +122,13 @@ export default function ProcessDetailPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Process Not Found</h2>
-          <p className="text-gray-600 mb-6">The requested process could not be found.</p>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Processo Não Encontrado</h2>
+          <p className="text-gray-600 mb-6">O processo solicitado não foi encontrado.</p>
           <button
             onClick={handleBack}
             className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition-colors"
           >
-            Voltar aos Processos
+            Voltar ao Snapshot
           </button>
         </div>
       </div>
@@ -148,21 +151,17 @@ export default function ProcessDetailPage() {
                 </svg>
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{processInfo.processName}</h1>
+                <div className="flex items-center space-x-2">
+                  <h1 className="text-2xl font-bold text-gray-900">{processInfo.processName}</h1>
+                  <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full font-medium">
+                    Snapshot #{snapshotId}
+                  </span>
+                </div>
                 <p className="text-gray-600 mt-1">
                   PID: {processInfo.processId} • Threads: {processInfo.threadCount}
                 </p>
               </div>
             </div>
-            <button
-              onClick={handleRefresh}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors flex items-center space-x-2"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              <span>Atualizar</span>
-            </button>
           </div>
         </div>
       </div>
@@ -170,7 +169,7 @@ export default function ProcessDetailPage() {
       {/* Process Details */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex items-center">
-          {/* ActiveProcessLinks */}
+          {/* ActiveProcessLinks - Previous */}
           <div className="flex-[2_1] bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
               <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -288,18 +287,6 @@ export default function ProcessDetailPage() {
                   <span className="text-gray-600">Maior tamanho virtual:</span>
                   <span className="font-mono text-sm">{formatBytes(processInfo.peakVirtualSize)}</span>
                 </div>
-{/*                 <div className="flex justify-between">
-                  <span className="text-gray-600">Páginas de Arquivo usadas:</span>
-                  <span className="font-mono text-sm">{formatBytes(processInfo.pageFileUsage)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Máximo de Páginas de Arquivo:</span>
-                  <span className="font-mono text-sm">{formatBytes(processInfo.peakPageFileUsage)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Uso Privado:</span>
-                  <span className="font-mono text-sm">{formatBytes(processInfo.privateUsage)}</span>
-                </div> */}
                 <div className="flex justify-between">
                   <span className="text-gray-600">Falta de Página:</span>
                   <span className="font-mono text-sm">{formatNumber(processInfo.pageFaultCount)}</span>
@@ -308,7 +295,7 @@ export default function ProcessDetailPage() {
             </div>
           </div>
 
-          {/* ActiveProcessLinks */}
+          {/* ActiveProcessLinks - Next */}
           <div className="flex-[2_1] bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
               <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

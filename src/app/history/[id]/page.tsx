@@ -1,20 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { apiService } from '@/services/api';
 import { authService } from '@/services/auth';
-import { IterateProcessesResponse, ProcessInfo } from '@/types/api';
-import AuthModal from '@/components/AuthModal';
+import { ProcessInfo } from '@/types/api';
 
-export default function ProcessesPage() {
+export default function SnapshotDetailPage() {
   const [processes, setProcesses] = useState<ProcessInfo[]>([]);
+  const [snapshotInfo, setSnapshotInfo] = useState<{ id: number; type: string; createdAt: string } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [processCount, setProcessCount] = useState(0);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
+  const params = useParams();
+  const snapshotId = parseInt(params.id as string);
 
   useEffect(() => {
     // Check if Webhook is configured
@@ -23,51 +22,77 @@ export default function ProcessesPage() {
       return;
     }
 
-    // Check authentication status
-    setIsAuthenticated(authService.isAuthenticated());
+    // Check if user is authenticated
+    if (!authService.isAuthenticated()) {
+      router.push('/');
+      return;
+    }
 
-    fetchProcesses();
-  }, []);
+    if (isNaN(snapshotId)) {
+      setError('ID de snapshot inválido');
+      setIsLoading(false);
+      return;
+    }
 
-  const fetchProcesses = async () => {
+    fetchSnapshotData();
+  }, [router, snapshotId]);
+
+  const fetchSnapshotData = async () => {
     setIsLoading(true);
     setError(null);
-
+    
     try {
-      const response: IterateProcessesResponse = await apiService.iterateProcesses();
-
-      if (response.success) {
-        setProcesses(response.processes || []);
-        setProcessCount(response.processCount);
+      const snapshotResponse = await apiService.getSnapshotProcesses(snapshotId);
+      
+      if (snapshotResponse.snapshot) {
+        const snapshot = snapshotResponse.snapshot;
+        setSnapshotInfo({
+          id: snapshot.id,
+          type: snapshot.snapshotType,
+          createdAt: snapshot.createdAt,
+        });
       } else {
-        setError('Failed to fetch processes from API');
+        setError('Falha ao obter detalhes da Snapshot');
+      }
+
+      if (snapshotResponse.processes) {
+        setProcesses(snapshotResponse.processes || []);
+      } else {
+        setError("Falha ao buscar processos da Snapshot");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred while fetching processes');
+      setError(err instanceof Error ? err.message : 'Ocorreu um erro ao buscar a Snapshot');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleProcessClick = (processId: number) => {
-    router.push(`/process/${processId}`);
+    router.push(`/history/${snapshotId}/process/${processId}`);
   };
 
-  const handleRefresh = () => {
-    fetchProcesses();
+  const handleBack = () => {
+    router.push('/history');
   };
 
-  const handleConfigureApi = () => {
-    router.push('/');
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
   };
 
-  const handleAuthSuccess = () => {
-    setIsAuthenticated(true);
+  const getTypeLabel = (type: string) => {
+    return type === 'iteration' ? 'Iteração Completa' : 'Consulta por PID';
   };
 
-  const handleLogout = () => {
-    authService.logout();
-    setIsAuthenticated(false);
+  const getTypeColor = (type: string) => {
+    return type === 'iteration' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800';
   };
 
   if (isLoading) {
@@ -75,7 +100,7 @@ export default function ProcessesPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading processes...</p>
+          <p className="text-gray-600">Carregando snapshot...</p>
         </div>
       </div>
     );
@@ -90,20 +115,20 @@ export default function ProcessesPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Error</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Erro</h2>
           <p className="text-gray-600 mb-6">{error}</p>
           <div className="space-y-3">
             <button
-              onClick={handleRefresh}
+              onClick={fetchSnapshotData}
               className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors"
             >
               Tentar Novamente
             </button>
             <button
-              onClick={handleConfigureApi}
+              onClick={handleBack}
               className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition-colors"
             >
-              Configurar API
+              Voltar ao Histórico
             </button>
           </div>
         </div>
@@ -118,67 +143,30 @@ export default function ProcessesPage() {
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Process Monitor</h1>
-              <p className="text-gray-600 mt-1">
-                {processCount} processos encontrados
-              </p>
-              {isAuthenticated && (
-                <div className="mt-2 inline-flex items-center bg-green-50 border border-green-200 rounded-full px-3 py-1">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                  <span className="text-green-700 text-xs font-medium">
-                    Logado como {authService.getUser()?.name}
-                  </span>
-                </div>
-              )}
-            </div>
-            <div className="flex space-x-3">
-              {!isAuthenticated ? (
+              <div className="flex items-center space-x-3">
                 <button
-                  onClick={() => setIsAuthModalOpen(true)}
-                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors flex items-center space-x-2 cursor-pointer"
+                  onClick={handleBack}
+                  className="text-gray-600 hover:text-gray-900 transition-colors"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                  <span>Login</span>
                 </button>
-              ) : (
-                <>
-                  <button
-                    onClick={() => router.push('/history')}
-                    className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors flex items-center space-x-2 cursor-pointer"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>Histórico</span>
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors flex items-center space-x-2 cursor-pointer"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    <span>Sair</span>
-                  </button>
-                </>
-              )}
-              <button
-                onClick={handleRefresh}
-                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors flex items-center space-x-2 cursor-pointer"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                <span>Atualizar</span>
-              </button>
-              <button
-                onClick={handleConfigureApi}
-                className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors cursor-pointer"
-              >
-                Configurar API
-              </button>
+                <div>
+                  <div className="flex items-center space-x-2 mb-1">
+                    <h1 className="text-2xl font-bold text-gray-900">Snapshot #{snapshotId}</h1>
+                    {snapshotInfo && (
+                      <span className={`text-xs font-medium px-2 py-1 rounded-full ${getTypeColor(snapshotInfo.type)}`}>
+                        {getTypeLabel(snapshotInfo.type)}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-gray-600">
+                    {processes.length} processo{processes.length !== 1 ? 's' : ''} capturado{processes.length !== 1 ? 's' : ''}
+                    {snapshotInfo && ` • ${formatDate(snapshotInfo.createdAt)}`}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -187,20 +175,20 @@ export default function ProcessesPage() {
       {/* Process List */}
       <div className="max-w-4xl mx-auto px-4 py-8">
         {processes.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="text-gray-400 mb-4">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No processes found</h3>
-            <p className="text-gray-600">Try refreshing to load processes from the API.</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum processo encontrado</h3>
+            <p className="text-gray-600">Este snapshot não contém processos.</p>
           </div>
         ) : (
           <div className="relative">
             {/* Vertical connecting line */}
             <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-300"></div>
-
+            
             {/* Process cards */}
             <div className="space-y-4">
               {processes.map((process) => (
@@ -211,7 +199,7 @@ export default function ProcessesPage() {
                   {/* Process card */}
                   <div className="ml-16">
                     <div
-                      onClick={() => handleProcessClick(process.processId)}
+                      onClick={() => handleProcessClick(process.id)}
                       className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md hover:border-indigo-300 transition-all cursor-pointer group"
                     >
                       <div className="flex items-center justify-between">
@@ -246,13 +234,6 @@ export default function ProcessesPage() {
           </div>
         )}
       </div>
-
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        onSuccess={handleAuthSuccess}
-      />
     </div>
   );
 }
