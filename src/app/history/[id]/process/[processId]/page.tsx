@@ -179,7 +179,7 @@ export default function SnapshotProcessDetailPage() {
             </h2>
             <div>
                {processInfo.previousProcess && ( 
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer hover:bg-gray-200 transition duration-300 ease-in-out" onClick={() => handleProcessClick(processInfo.previousProcess.processId)}>
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer hover:bg-gray-200 transition duration-300 ease-in-out" onClick={() => handleProcessClick(processInfo.previousProcess.id)}>
                     <h1 className="bg-indigo-600 text-white text-center mb-4">Processo Anterior (Backlink)</h1>
                     
                           <div>
@@ -305,7 +305,7 @@ export default function SnapshotProcessDetailPage() {
             </h2>
             <div>
                 {processInfo.nextProcess && (
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer hover:bg-gray-200 transition duration-300 ease-in-out" onClick={() => handleProcessClick(processInfo.nextProcess.processId)}>
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer hover:bg-gray-200 transition duration-300 ease-in-out" onClick={() => handleProcessClick(processInfo.nextProcess.id)}>
                       <h1 className="bg-green-600 text-white text-center mb-4">Processo Adiante (Forwardlink)</h1>
                             <div>
                               <div className="mb-4">

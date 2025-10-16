@@ -3,6 +3,7 @@ export interface ProcessByPidRequest {
 }
 
 export interface AdjacentProcess {
+  id: number;
   processId: number;
   eProcessAddress: string;
   processName: string;
@@ -64,7 +65,7 @@ export interface IterateProcessesResponse {
 
 export interface ProcessByPidResponse {
   success: boolean;
-  process: ProcessInfo;
+  processInfo: ProcessInfo;
   error?: string;
 }
 

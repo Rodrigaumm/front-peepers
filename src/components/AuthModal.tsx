@@ -42,8 +42,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
           setPassword('');
         }, 2000);
       }
-    } catch (err) {
-      setError('Erro na comunicação com o servidor');
+    } catch (err: any) {
+      setError(err.message ? err.message : 'Erro na comunicação com o servidor');
     } finally {
       setIsLoading(false);
     }

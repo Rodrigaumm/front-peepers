@@ -35,9 +35,8 @@ export default function ProcessDetailPage() {
     try {
       const response: ProcessByPidResponse = await apiService.getProcessByPid(pid);
 
-      console.log(response);
       if (response.success) {
-        setProcessInfo(response.process);
+        setProcessInfo(response.processInfo);
       } else {
         setError(response.error || 'Failed to fetch process details');
       }
