@@ -3,14 +3,16 @@ export interface ProcessByPidRequest {
 }
 
 export interface AdjacentProcess {
+  id: number;
   processId: number;
   eProcessAddress: string;
   processName: string;
 }
 
 export interface ProcessInfo {
+  id: number;
   processId: number;
-  processName: number;
+  processName: string;
   currentProcessAddress: string;
   threadCount: number;
   parentProcessId: number;
@@ -65,4 +67,79 @@ export interface ProcessByPidResponse {
   success: boolean;
   processInfo: ProcessInfo;
   error?: string;
+}
+
+// Authentication types
+export interface User {
+  id: number;
+  name: string;
+}
+
+export interface LoginRequest {
+  name: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  name: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  user: User;
+}
+
+export interface RegisterResponse {
+  message: string;
+  user: User;
+}
+
+// Snapshot types
+export interface Snapshot {
+  id: number;
+  userId: number;
+  snapshotType: 'iteration' | 'query';
+  processCount: number;
+  createdAt: string;
+}
+
+export interface SnapshotDetail extends Snapshot {
+  processes: ProcessInfo[];
+}
+
+export interface SnapshotDetailResponse {
+  success: boolean;
+  snapshot: SnapshotDetail;
+}
+
+export interface SnapshotProcessesResponse {
+  processes: ProcessInfo[];
+  snapshot: SnapshotDetail;
+}
+
+export interface QueryHistory {
+  id: number;
+  snapshotId: number;
+  pid: number;
+  processName: string;
+  queriedAt: string;
+}
+
+export interface QueryHistoryResponse {
+  success: boolean;
+  queries: QueryHistory[];
+}
+
+export interface Statistics {
+  totalSnapshots: number;
+  totalProcesses: number;
+  iterationSnapshots: number;
+  querySnapshots: number;
+  uniquePids: number;
+}
+
+export interface StatisticsResponse {
+  success: boolean;
+  statistics: Statistics;
 }
